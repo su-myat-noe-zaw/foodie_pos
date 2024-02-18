@@ -4,7 +4,9 @@ import React from 'react'
 
 const index = () => {
   return (
-    <Button onClick={()=> signIn("google", { callbackUrl: '/' })}>Sign in with google</Button>
+    <div>
+      <Button onClick={()=> signIn("google")}>Sign in with google</Button>
+    </div>
   )
 }
 

@@ -7,7 +7,10 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import AppDrawer from './AppDrawer';
-import { Drawer } from '@mui/material';
+import { Button, Drawer } from '@mui/material';
+import ThemeSwitcher from './ThemeSwitcher';
+import { signOut, useSession } from 'next-auth/react';
+import { config } from '@/utils/config';
 
 const drawerWidth = 240;
 
@@ -17,6 +20,7 @@ interface Props {
 }
 
 export default function Layout(props: Props) {
+  const { data: sessionData } = useSession()
   const { window, children } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
@@ -36,9 +40,17 @@ export default function Layout(props: Props) {
     }
   };
 
-
-
   const container = window !== undefined ? () => window().document.body : undefined;
+
+  const fetchData = async ()=>{
+    const response = await fetch(`${config.apiBaseUrl}/app`)
+    const dataFromServer = await response.json()
+    console.log(dataFromServer)
+  }
+
+  React.useEffect(()=>{
+    fetchData()
+  },[])
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -46,8 +58,8 @@ export default function Layout(props: Props) {
       <AppBar
         position="fixed"
         sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
+          width: { sm: `calc(100% - ${sessionData ? drawerWidth : 0 }px)` },
+          ml: { sm: `${sessionData ? drawerWidth : 0 }px` },
         }}
       >
         <Toolbar>
@@ -60,17 +72,26 @@ export default function Layout(props: Props) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Backoffice App
-          </Typography>
+          <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="h6" noWrap component="div">
+              THE FOODIES
+            </Typography>
+            <Box>
+              <ThemeSwitcher />
+              {/* <IconButton></IconButton> */}
+              {
+                sessionData && <Button variant='contained' color="secondary" sx={{ ml: 2 }} onClick={()=> signOut({ callbackUrl: '/' })}>Logout</Button>
+              }
+            </Box>
+          </Box>
         </Toolbar>
       </AppBar>
+      { sessionData &&
       <Box
         component="nav"
         sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
         aria-label="mailbox folders"
       >
-        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
         <Drawer
           container={container}
           variant="temporary"
@@ -78,7 +99,7 @@ export default function Layout(props: Props) {
           onTransitionEnd={handleDrawerTransitionEnd}
           onClose={handleDrawerClose}
           ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
+            keepMounted: true,
           }}
           sx={{
             display: { xs: 'block', sm: 'none' },
@@ -98,6 +119,7 @@ export default function Layout(props: Props) {
           <AppDrawer/>
         </Drawer>
       </Box>
+      }
       <Box
         component="main"
         sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
