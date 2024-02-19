@@ -1,14 +1,11 @@
 import * as React from 'react';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import MailIcon from '@mui/icons-material/Mail';
 import Divider from '@mui/material/Divider';
 import Logo from '../assets/logo.png'
-import DarkLogo from '../assets/darkLogo.png'
 import Image from 'next/image';
 import { ThemeContext } from '@/utils/themeContext';
 import { Box, Typography } from '@mui/material';
@@ -21,7 +18,7 @@ import TableRestaurantIcon from '@mui/icons-material/TableRestaurant';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Link from 'next/link';
-import { log } from 'console';
+import { useRouter } from 'next/router';
 
 const menuItems = [
   {
@@ -68,18 +65,19 @@ const menuItems = [
 
 const AppDrawer = () =>{
   const { theme, toggleTheme } = React.useContext(ThemeContext);
+  const router = useRouter()
 
   // React.useEffect(()=>{
-  //   console.log(theme);
+  //   console.log();
     
-  // },[theme])
+  // },[])
   return (
   <div>
     {/* <Toolbar /> */}
     <Divider />
     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <Image
-          src={theme?.palette?.mode === 'light' ? Logo : DarkLogo}
+          src={Logo}
           alt="the foodies"
           style={{ width: '90px', height: '90px' }}
         />
@@ -89,15 +87,23 @@ const AppDrawer = () =>{
     <List>
       {menuItems.map((item, index) => (
         <Link key={index} href={item.route} style={{ textDecoration: "none" }}>
-          <ListItem key={index} disablePadding>
+          <ListItem key={index} disablePadding
+            sx={{
+              backgroundColor:
+                router.pathname === item.route ? theme.palette.primary.main : 'inherit',
+            }}>
             <ListItemButton>
-              <ListItemIcon>
+              <ListItemIcon sx={{ color: theme.palette.mode === "dark" || router.pathname === item.route ? theme.palette.primary.contrastText : theme.palette.text.primary }}>
                 { item.icon } 
               </ListItemIcon>
-              <ListItemText primary={item.label} sx={{ textTransform: 'capitalize', color: theme.palette.mode === 'light' ? '#121212' : '#fffff' }} />
+              <ListItemText primary={item.label}
+                sx={{
+                  textTransform: 'capitalize',
+                  color: theme.palette.mode === "dark" || router.pathname === item.route ? theme.palette.primary.contrastText : theme.palette.text.primary
+                }} />
             </ListItemButton>
           </ListItem>
-          { index === 6 && <Divider></Divider> }
+          { index === 6 && <Divider sx={{ my: 1 }}></Divider> }
         </Link>
       ))}
     </List>

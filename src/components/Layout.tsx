@@ -11,6 +11,8 @@ import { Button, Drawer } from '@mui/material';
 import ThemeSwitcher from './ThemeSwitcher';
 import { signOut, useSession } from 'next-auth/react';
 import { config } from '@/utils/config';
+import Image from 'next/image';
+import Logo from '../assets/logo.png'
 
 const drawerWidth = 240;
 
@@ -73,9 +75,21 @@ export default function Layout(props: Props) {
             <MenuIcon />
           </IconButton>
           <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="h6" noWrap component="div">
-              THE FOODIES
-            </Typography>
+            {
+              sessionData ?
+              <Typography variant="h6" noWrap component="div">
+              Back-Office
+              </Typography>
+              :
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Image
+                    src={Logo}
+                    alt="the foodies"
+                    style={{ width: '90px', height: '90px' }}
+                  />
+                <Typography variant='h5' sx={{ fontWeight: 'bold' }}>THE FOODIES</Typography>
+              </Box>
+            }
             <Box>
               <ThemeSwitcher />
               {/* <IconButton></IconButton> */}

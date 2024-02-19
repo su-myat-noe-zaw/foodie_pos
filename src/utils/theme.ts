@@ -13,7 +13,7 @@ export const darkTheme: Theme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      main: '#211C6A',
+      main: '#2196F3',
     },
   },
 });
