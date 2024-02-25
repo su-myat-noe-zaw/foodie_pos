@@ -10,9 +10,10 @@ import AppDrawer from './AppDrawer';
 import { Button, Drawer } from '@mui/material';
 import ThemeSwitcher from './ThemeSwitcher';
 import { signOut, useSession } from 'next-auth/react';
-import { config } from '@/utils/config';
 import Image from 'next/image';
 import Logo from '../assets/logo.png'
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { getAppData } from '@/store/slices/appSlice';
 
 const drawerWidth = 240;
 
@@ -26,6 +27,8 @@ export default function Layout(props: Props) {
   const { window, children } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
+  const dispatch = useAppDispatch()
+  const { init } = useAppSelector(state=> state.APP)
 
   const handleDrawerClose = () => {
     setIsClosing(true);
@@ -44,15 +47,11 @@ export default function Layout(props: Props) {
 
   const container = window !== undefined ? () => window().document.body : undefined;
 
-  const fetchData = async ()=>{
-    const response = await fetch(`${config.apiBaseUrl}/app`)
-    const dataFromServer = await response.json()
-    console.log(dataFromServer)
-  }
-
   React.useEffect(()=>{
-    fetchData()
-  },[])
+    if(sessionData && !init){
+      dispatch(getAppData({}))
+    }
+  },[sessionData])
 
   return (
     <Box sx={{ display: 'flex' }}>
