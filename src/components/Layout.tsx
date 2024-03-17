@@ -28,7 +28,7 @@ export default function Layout(props: Props) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
   const dispatch = useAppDispatch()
-  const { init } = useAppSelector(state=> state.APP)
+  const { init } = useAppSelector(state=> state.app)
 
   const handleDrawerClose = () => {
     setIsClosing(true);
